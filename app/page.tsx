@@ -15,12 +15,12 @@ const initialVals: State = {
   operation: null,
 };
 
-export default function Home() {
+export default function Calculator() {
 
   const [state, setState] = useState<State>(initialVals);
-  const [fSize, setFSize] = useState(40);
+  const [fSize, setFSize] = useState(34);
   const display = state.next || state.total || "0";
-//  console.log(state);
+  console.log(state);
 
  const textRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +35,10 @@ export default function Home() {
           setFSize(fSize - 2);
           textRef.current.style.fontSize = `${fSize}px`;
         } 
-        console.log(fSize)
+        // console.log(fSize)
       }
       fontSizeFunc();
-  }, [display]);
+  }, [display, fSize]);
 
 
   // CHECK IF IS NUMBER
@@ -56,7 +56,7 @@ export default function Home() {
         return total.minus(next).toString();
       case "x":
         return total.times(next).toString();
-      case "÷":
+      case "/":
         if(next.toString() === "0"){
          alert("Can't divide by 0");
           return "0";
@@ -86,7 +86,7 @@ export default function Home() {
     // CASE =
     if(value === "="){
       if(state.next && state.operation){
-        return {...state, total: calculate(state), next: null, operation: null};
+        return {...state, total: calculate(state), next:calculate(state), operation: null};
       }else{
         return state;
       }
@@ -149,13 +149,18 @@ export default function Home() {
     setState(newState);
   };
 
+  // HANDLE COPY
+  const handleCopy = () => {
+    navigator.clipboard.writeText(display);
+    alert("Valore copiato.");
+  };
+
   // RETURN
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <h1>Calc</h1>
+    <div className="flex flex-col items-center justify-items-center h-auto p-8 font-[family-name:var(--font-geist-sans)]  text-white">
 
       <div className="grid grid-cols-4 text-sm text-center gap-4 p-3 border border-orange-300 rounded-md">
-        <div ref={textRef} className="cursor-pointer p-2 border border-orange-100 rounded-sm shadow-sm hover:border-orange-400 duration-300 col-span-4 flex overflow-x-hidden items-center w-[210px]">{display}</div>
+        <div ref={textRef} className="cursor-pointer px-2 py-3 border border-orange-100 rounded-sm shadow-sm hover:border-orange-400 duration-300 col-span-4 flex items-center w-[210px] overflow-y-hidden overflow-x-auto" onClick={handleCopy}>{display}</div>
         <div
           className="cursor-pointer p-2 border border-orange-100 rounded-sm shadow-smhover:border-orange-400 duration-300 col-span-1"
           onClick={() => handleClick("ac")}
@@ -171,7 +176,7 @@ export default function Home() {
           %
         </div>
         <div
-          className="cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full"
+          className={`cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full ${state.operation === "+" ? "bg-orange-600" : "bg-transparent"}`}
           onClick={() => handleClick("+")}
         >
           +
@@ -195,7 +200,7 @@ export default function Home() {
           3
         </div>
         <div
-          className="cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full"
+          className={`cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full ${state.operation === "/" ? "bg-orange-600" : "bg-transparent"}`}
           onClick={() => handleClick("/")}
         >
           /
@@ -219,7 +224,7 @@ export default function Home() {
           6
         </div>
         <div
-          className="cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full"
+          className={`cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full ${state.operation === "x" ? "bg-orange-600" : "bg-transparent"}`}
           onClick={() => handleClick("x")}
         >
           X
@@ -243,7 +248,7 @@ export default function Home() {
           9
         </div>
         <div
-          className="cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full"
+          className={`cursor-pointer p-2 border border-orange-300 shadow-sm hover:border-orange-600 duration-300  w-9 h-9 flex justify-center items-center rounded-full ${state.operation === "-" ? "bg-orange-600" : "bg-transparent"}`}
           onClick={() => handleClick("-")}
         >
           -
